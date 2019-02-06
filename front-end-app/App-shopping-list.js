@@ -44,7 +44,7 @@ export default class App extends React.Component {
           <Button onPress={this.clear} title=" Clear " />
         </View>
         <View style={styles.list}>
-          <Text style={{ textTransform: "uppercase" }}>Shopping List</Text>
+          <Text style={{ textTransform: "capitalize" }}>Shopping List</Text>
           <FlatList
             data={this.state.list}
             renderItem={({ item }) => <Text id={item.key}>{item.key}</Text>}

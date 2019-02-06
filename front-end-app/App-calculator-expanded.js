@@ -73,7 +73,10 @@ export default class App extends React.Component {
         </View>
         <View style={styles.history}>
           <Text>History</Text>
-          <FlatList data={this.state.history} renderItem={this._renderItem} />
+          <FlatList
+            data={this.state.history}
+            renderItem={({ item }) => <Text id={item.key}>{item.key}</Text>}
+          />
         </View>
       </View>
     );
