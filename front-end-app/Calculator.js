@@ -1,5 +1,13 @@
 import React from "react";
-import { Button, TextInput, StyleSheet, Text, View } from "react-native";
+import {
+  Button,
+  TextInput,
+  StyleSheet,
+  Text,
+  View,
+  Keyboard,
+  TouchableWithoutFeedback
+} from "react-native";
 
 export default class Calculator extends React.Component {
   static navigationOptions = { title: "Calculator" };
@@ -30,45 +38,49 @@ export default class Calculator extends React.Component {
   render() {
     const { navigate } = this.props.navigation;
     return (
-      <View style={styles.container}>
-        <View style={styles.input}>
-          <Text>Result: {this.state.result}</Text>
-          <TextInput
-            style={{
-              width: 200,
-              borderColor: "gray",
-              borderWidth: 1,
-              height: 40
-            }}
-            keyboardType="numeric"
-            onChangeText={text => {
-              this.setState({ num1: parseInt(text) });
-            }}
-            value={this.state.num1}
-          />
-          <TextInput
-            style={{
-              width: 200,
-              borderColor: "gray",
-              borderWidth: 1,
-              height: 40
-            }}
-            keyboardType="numeric"
-            onChangeText={text => {
-              this.setState({ num2: parseInt(text) });
-            }}
-            value={this.state.num2}
-          />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <View style={styles.container}>
+          <View style={styles.input}>
+            <Text>Result: {this.state.result}</Text>
+            <TextInput
+              style={{
+                width: 200,
+                borderColor: "gray",
+                borderWidth: 1,
+                height: 40
+              }}
+              keyboardType="numeric"
+              onChangeText={text => {
+                this.setState({ num1: parseInt(text) });
+              }}
+              value={this.state.num1}
+            />
+            <TextInput
+              style={{
+                width: 200,
+                borderColor: "gray",
+                borderWidth: 1,
+                height: 40
+              }}
+              keyboardType="numeric"
+              onChangeText={text => {
+                this.setState({ num2: parseInt(text) });
+              }}
+              value={this.state.num2}
+            />
+          </View>
+          <View style={styles.buttons}>
+            <Button onPress={this.sum} title=" + " />
+            <Button onPress={this.subtract} title=" - " />
+            <Button
+              onPress={() =>
+                navigate("History", { history: this.state.history })
+              }
+              title="History"
+            />
+          </View>
         </View>
-        <View style={styles.buttons}>
-          <Button onPress={this.sum} title=" + " />
-          <Button onPress={this.subtract} title=" - " />
-          <Button
-            onPress={() => navigate("History", { history: this.state.history })}
-            title="History"
-          />
-        </View>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 }
