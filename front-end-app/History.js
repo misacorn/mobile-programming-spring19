@@ -9,6 +9,7 @@ export default class History extends React.Component {
         <Text style={{ textTransform: "uppercase", padding: 20 }}>History</Text>
         <FlatList
           data={params.history}
+          keyExtractor={item =>item.id}
           renderItem={({ item }) => <Text id={item.key}>{item.key}</Text>}
         />
       </View>
