@@ -10,23 +10,18 @@ import {
   Image
 } from "react-native";
 export default class App extends React.Component {
-  state = {
-    input: 0,
-    result: 0,
-    currencies: ["AUD", "CAD", "GBP", "JPY", "USD"],
-    currency: ""
-  };
+  state = { recipes: [], ingredient: "" };
 
   inputChange = text => {
-    this.setState({ input: parseInt(text) });
+    this.setState({ ingredient: text });
   };
 
-  convert = () => {
-    const url = ``;
+  findRecipe = () => {
+    const url = `http://www.recipepuppy.com/api/?i=${this.state.ingredient}`;
     fetch(url)
       .then(response => response.json())
       .then(responseJson => {
-        this.setState({ recipes: responseJson.results });
+        this.setState({ recipes: responseJson.results, ingredient: "" });
       })
       .catch(error => {
         Alert.alert(error);
@@ -36,37 +31,37 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>`${this.state.result}€`</Text>
-
-        <View style={styles.inputs}>
+        <View style={styles.recipes}>
+          <FlatList
+            style={{ marginLeft: "1%" }}
+            data={this.state.recipes}
+            keyExtractor={item => item.id}
+            renderItem={({ item }) => (
+              <View>
+                <Text>{item.title}</Text>
+                <Image
+                  style={{ width: 50, height: 50 }}
+                  source={{ uri: item.thumbnail }}
+                />
+              </View>
+            )}
+          />
+        </View>
+        <View style={styles.input}>
           <TextInput
             style={{
               width: 200,
               borderColor: "gray",
               borderWidth: 1,
-              height: 30,
-              margin: 20
+              height: 40
             }}
-            keyboardType="numeric"
             onChangeText={this.inputChange}
-            value={this.state.guessNum}
+            value={this.state.ingredient}
           />
-          <Picker
-            selectedValue={this.state.currency}
-            style={{ height: 50, width: 100 }}
-            onValueChange={(itemValue, itemIndex) =>
-              this.setState({ currency: itemValue })
-            }
-          >
-            <Picker.Item label="AUD" value="AUD" />
-            <Picker.Item label="CAD" value="CAD" />
-            <Picker.Item label="GBP" value="GBP" />
-            <Picker.Item label="JPY" value="JPY" />
-            <Picker.Item label="USD" value="USD" />
-          </Picker>
         </View>
-
-        <Button onPress={this.convert} title=" Convert " />
+        <View style={styles.buttons}>
+          <Button onPress={this.findRecipe} title=" Find " />
+        </View>
       </View>
     );
   }
@@ -80,9 +75,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center"
   },
-  inputs: {
-    flexDirection: "row",
+  input: {
+    flexDirection: "column",
     alignItems: "center",
     margin: 15
+  },
+  buttons: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between"
+  },
+  recipes: {
+    flex: 3,
+    height: 200
   }
 });
