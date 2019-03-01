@@ -1,35 +1,71 @@
 import React from "react";
-import { View, TextInput, Button, Stylesheet } from "react-native";
-import { MapView } from "expo";
+import {
+  View,
+  TextInput,
+  Button,
+  StyleSheet,
+  KeyboardAvoidingView
+} from "react-native";
+import { Location, MapView } from "expo";
 
 export default class App extends React.Component {
-  findAddress = e => {
-    e.preventDefault();
+  state = {
+    location: null,
+    latitude: 60.200692,
+    longitude: 24.934302
+  };
+
+  inputChange = e => {
+    this.setState({ location: e.target.value });
+  };
+
+  findAddress = async () => {
+    const location = JSON.stringify(this.state.location);
+    const locationResult = await Location.geocodeAsync(location);
+    const latitude = locationResult[0].latitude;
+    const longitude = locationResult[0].longitude;
+    this.setState({ latitude, longitude });
   };
 
   render() {
     return (
       <View style={styles.container}>
         <MapView
-          style={{ flex: 5 }}
+          style={{ flex: 4 }}
           initialRegion={{
-            latitude: 60.200692,
-            longitude: 24.934302,
+            latitude: this.state.latitude,
+            longitude: this.state.longitude,
             latitudeDelta: 0.0322,
             longitudeDelta: 0.0221
           }}
         >
           <MapView.Marker
-            coordinate={{ latitude: 60.201373, longitude: 24.934041 }}
-            title="Haaga-Helia"
+            coordinate={{
+              latitude: this.state.latitude,
+              longitude: this.state.longitude
+            }}
+            title={this.state.location}
           />
         </MapView>
-        <TextInput style={styles.input} onChange={e => e.target.value} />
-        <Button
-          style={styles.button}
-          onPress={this.findAddress}
-          title=" Show "
-        />
+        >
+        <View style={styles.submitBox}>
+          <TextInput
+            style={{
+              width: 200,
+              borderColor: "gray",
+              borderWidth: 1,
+              height: 40
+            }}
+            onChange={this.inputChange}
+            placeholder="Type your address"
+          />
+          <Button
+            style={styles.button}
+            onPress={this.findAddress}
+            title=" Show "
+          />
+        </View>
+        <KeyboardAvoidingView />
       </View>
     );
   }
@@ -37,23 +73,11 @@ export default class App extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center"
   },
-  input: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-    margin: 15,
-    width: 200,
-    borderColor: "gray",
-    borderWidth: 1,
-    height: 40
-  },
   button: {
-    alignItems: "center",
     justifyContent: "space-between"
   }
 });
