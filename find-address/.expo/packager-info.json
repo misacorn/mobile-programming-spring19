@@ -1,9 +1,9 @@
 {
   "devToolsPort": 19002,
-  "expoServerPort": 19000,
-  "packagerPort": 19001,
-  "packagerPid": 25747,
-  "expoServerNgrokUrl": "https://h3-trh.anonymous.find-address.exp.direct",
-  "packagerNgrokUrl": "https://packager.h3-trh.anonymous.find-address.exp.direct",
-  "ngrokPid": 25763
+  "expoServerPort": null,
+  "packagerPort": null,
+  "packagerPid": null,
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null
 }

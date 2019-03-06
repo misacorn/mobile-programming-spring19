@@ -1,92 +1,94 @@
-import React from "react";
-import {
-  Button,
-  TextInput,
-  StyleSheet,
-  View,
-  FlatList,
-  Alert,
-  Text,
-  Image
-} from "react-native";
+import React from 'react';
+import { StyleSheet, Text, TextInput, View, Button, FlatList, Alert } from 'react-native';
+import Expo, { SQLite } from 'expo';
+
+const db = SQLite.openDatabase('coursedb.db');
+
 export default class App extends React.Component {
-  state = { recipes: [], ingredient: "" };
+  constructor(props) {
+    super(props);
+    this.state = { product: '', amount: '', shoppingList: [] };
+  }
 
-  inputChange = text => {
-    this.setState({ ingredient: text });
-  };
+  componentDidMount() {
+    // Create course table
+    db.transaction(tx => {
+      tx.executeSql('create table if not exists course (id integer primary key not null, amount text, product text);');
+    });
+    this.updateList();
+  }
 
-  findRecipe = () => {
-    const url = `http://www.recipepuppy.com/api/?i=${this.state.ingredient}`;
-    fetch(url)
-      .then(response => response.json())
-      .then(responseJson => {
-        this.setState({ recipes: responseJson.results, ingredient: "" });
-      })
-      .catch(error => {
-        Alert.alert(error);
-      });
+  // Save course
+  saveItem = () => {
+    db.transaction(tx => {
+      tx.executeSql('insert into course (amount, product) values (?, ?)', [parseInt(this.state.amount), this.state.product]);
+    }, null, this.updateList)
+  }
+
+  // Update courselist
+  updateList = () => {
+    db.transaction(tx => {
+      tx.executeSql('select * from shoppingList', [], (_, { rows }) =>
+        this.setState({ courses: rows._array })
+      );
+    });
+  }
+
+  // Delete course
+  deleteItem = (id) => {
+    db.transaction(
+      tx => {
+        tx.executeSql(`delete from shoppingList where id = ?;`, [id]);
+      }, null, this.updateList
+    )
+  }
+
+  listSeparator = () => {
+    return (
+      <View
+        style={{
+          height: 5,
+          width: "80%",
+          backgroundColor: "#fff",
+          marginLeft: "10%"
+        }}
+      />
+    );
   };
 
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.recipes}>
-          <FlatList
-            style={{ marginLeft: "1%" }}
-            data={this.state.recipes}
-            keyExtractor={item => item.id}
-            renderItem={({ item }) => (
-              <View>
-                <Text>{item.title}</Text>
-                <Image
-                  style={{ width: 50, height: 50 }}
-                  source={{ uri: item.thumbnail }}
-                />
-              </View>
-            )}
-          />
-        </View>
-        <View style={styles.input}>
-          <TextInput
-            style={{
-              width: 200,
-              borderColor: "gray",
-              borderWidth: 1,
-              height: 40
-            }}
-            onChangeText={this.inputChange}
-            value={this.state.ingredient}
-          />
-        </View>
-        <View style={styles.buttons}>
-          <Button onPress={this.findRecipe} title=" Find " />
-        </View>
+        <TextInput placeholder='Product' style={{ marginTop: 30, fontSize: 18, width: 200, borderColor: 'gray', borderWidth: 1 }}
+          onChangeText={product => this.setState({ product })}
+          value={this.state.product} />
+        <TextInput placeholder='Amount' keyboardType="numeric" style={{ marginTop: 5, marginBottom: 5, fontSize: 18, width: 200, borderColor: 'gray', borderWidth: 1 }}
+          onChangeText={amount => this.setState({ amount })}
+          value={this.state.amount} />
+        <Button onPress={this.saveItem} title="Save" />
+        <Text style={{ marginTop: 30, fontSize: 20 }}>Courses</Text>
+        <FlatList
+          style={{ marginLeft: "5%" }}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => <View style={styles.listcontainer}><Text style={{ fontSize: 18 }}>{item.product}, {item.amount}   </Text>
+            <Text style={{ fontSize: 18, color: '#0000ff' }} onPress={() => this.deleteItem(item.id)}>done</Text></View>} data={this.state.shoppingList} ItemSeparatorComponent={this.listSeparator}
+        />
       </View>
     );
   }
+
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "column",
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
-  input: {
-    flexDirection: "column",
-    alignItems: "center",
-    margin: 15
-  },
-  buttons: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
-  },
-  recipes: {
-    flex: 3,
-    height: 200
+  listcontainer: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    alignItems: 'center'
   }
 });
