@@ -1,0 +1,10 @@
+{
+  "devToolsPort": 19002,
+  "expoServerPort": 19000,
+  "packagerPort": 19001,
+  "packagerPid": 4768,
+  "expoServerNgrokUrl": "https://y2-jrx.anonymous.shoppinglist-sqlite.exp.direct",
+  "packagerNgrokUrl": "https://packager.y2-jrx.anonymous.shoppinglist-sqlite.exp.direct",
+  "ngrokPid": 4785,
+  "webpackServerPort": null
+}
