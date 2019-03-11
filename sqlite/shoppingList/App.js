@@ -10,7 +10,7 @@ import {
 import firebase from "./config";
 
 export default class App extends React.Component {
-  state = { product: "", amount: "", list: [] };
+  state = { product: "", amount: "", items: [] };
 
   componentDidMount() {
     firebase
@@ -96,7 +96,7 @@ export default class App extends React.Component {
               </Text>
             </View>
           )}
-          data={this.state.list}
+          data={this.state.items}
           ItemSeparatorComponent={this.listSeparator}
         />
       </View>
