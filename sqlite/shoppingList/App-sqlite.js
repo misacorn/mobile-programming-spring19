@@ -5,45 +5,60 @@ import {
   TextInput,
   View,
   Button,
-  FlatList
+  FlatList,
+  Alert
 } from "react-native";
-import firebase from "./config";
-import Form from "react-native-form";
+import Expo, { SQLite } from "expo";
+
+const db = SQLite.openDatabase("shoppingList.db");
 
 export default class App extends React.Component {
   state = { product: "", amount: "", list: [] };
 
   componentDidMount() {
-    firebase
-      .database()
-      .ref("items/")
-      .on("value", snapshot => {
-        const data = snapshot.val();
-        const items = Object.values(data);
-        this.setState({ items });
-      });
+    db.transaction(tx => {
+      tx.executeSql(
+        "create table if not exists list (id integer primary key not null, product text, amount text);"
+      );
+    });
+    this.updateList();
   }
 
   saveItem = () => {
-    firebase
-      .database()
-      .ref("items/")
-      .push({
-        product: this.state.product,
-        amount: this.state.amount
-      });
+    db.transaction(
+      tx => {
+        tx.executeSql(
+          "insert into list (product, amount) values (?, ?)",
+          [this.state.product, this.state.amount]
+        );
+      },
+      null,
+      this.updateList
+    );
   };
 
-  // updateList = () => {
-  //   db.transaction(tx => {
-  //     tx.executeSql(
-  //       "select * from list",
-  //       [],
-  //       (_, { rows }) =>
-  //         this.setState({ list: rows._array })
-  //     );
-  //   });
-  // };
+  updateList = () => {
+    db.transaction(tx => {
+      tx.executeSql(
+        "select * from list",
+        [],
+        (_, { rows }) =>
+          this.setState({ list: rows._array })
+      );
+    });
+  };
+
+  deleteItem = id => {
+    db.transaction(
+      tx => {
+        tx.executeSql(`delete from list where id = ?;`, [
+          id
+        ]);
+      },
+      null,
+      this.updateList
+    );
+  };
 
   listSeparator = () => {
     return (
@@ -105,6 +120,12 @@ export default class App extends React.Component {
             <View style={styles.listcontainer}>
               <Text style={{ fontSize: 14 }}>
                 {item.product}, {item.amount}{" "}
+              </Text>
+              <Text
+                style={{ fontSize: 14, color: "#0000ff" }}
+                onPress={() => this.deleteItem(item.id)}
+              >
+                done
               </Text>
             </View>
           )}
