@@ -8,7 +8,6 @@ import {
   FlatList
 } from "react-native";
 import firebase from "./config";
-import Form from "react-native-form";
 
 export default class App extends React.Component {
   state = { product: "", amount: "", list: [] };
@@ -33,17 +32,6 @@ export default class App extends React.Component {
         amount: this.state.amount
       });
   };
-
-  // updateList = () => {
-  //   db.transaction(tx => {
-  //     tx.executeSql(
-  //       "select * from list",
-  //       [],
-  //       (_, { rows }) =>
-  //         this.setState({ list: rows._array })
-  //     );
-  //   });
-  // };
 
   listSeparator = () => {
     return (
