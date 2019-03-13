@@ -49,34 +49,34 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <TextInput
-          placeholder="Product"
-          style={{
-            marginTop: 30,
-            fontSize: 14,
-            width: 200,
-            borderColor: "gray",
-            borderWidth: 1
-          }}
-          onChangeText={product =>
-            this.setState({ product })
-          }
-          value={this.state.product}
-        />
-        <TextInput
-          placeholder="Amount"
-          style={{
-            marginTop: 5,
-            marginBottom: 5,
-            fontSize: 14,
-            width: 200,
-            borderColor: "gray",
-            borderWidth: 1
-          }}
-          onChangeText={amount => this.setState({ amount })}
-          value={this.state.amount}
-        />
-        <Button onPress={this.saveItem} title="Save" />
+        <View style={styles.top}>
+          <TextInput
+            placeholder="Product"
+            style={{
+              marginTop: 30,
+              fontSize: 14,
+              width: 200,
+              borderColor: "gray",
+              borderWidth: 1
+            }}
+            onChangeText={product => this.setState({ product })}
+            value={this.state.product}
+          />
+          <TextInput
+            placeholder="Amount"
+            style={{
+              marginTop: 5,
+              marginBottom: 5,
+              fontSize: 14,
+              width: 200,
+              borderColor: "gray",
+              borderWidth: 1
+            }}
+            onChangeText={amount => this.setState({ amount })}
+            value={this.state.amount}
+          />
+          <Button onPress={this.saveItem} title="Save" />
+        </View>
         <Text
           style={{
             marginTop: 30,
@@ -110,6 +110,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center"
+  },
+  top: {
+    marginTop: 50
   },
   listcontainer: {
     flexDirection: "row",
